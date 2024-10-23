@@ -21,7 +21,7 @@ class Banisher:
             self.foe.manna -= damage
         elif attack_choice == 'elixir' and self.elixirs > 0:
             print(f"{self.name} throws an elixir at the {self.foe.element} elemental! -1 Damage")
-            self.foe.manna = 0  # Elixir defeats the foe
+            self.foe.manna -= 2 
             self.elixirs -= 1
         else:
             print("Invalid choice or no elixirs left.")
