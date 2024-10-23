@@ -39,7 +39,7 @@ class Banisher:
         elif self.defense == 'shield':
             print(f"{self.name} defends with a shield, blocking the attack!")
             self.manna += 1
-        elif self.defense == 'elixir':
+        elif self.defense == 'elixir' and self.manna < 2:
             print(f"{self.name} drinks an elixir and is restored to full manna!")
             self.manna = 10
         else:
