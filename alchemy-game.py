@@ -39,9 +39,6 @@ class Banisher:
         elif self.defense == 'shield':
             print(f"{self.name} defends with a shield, blocking the attack!\n")
             self.manna += 1
-        elif self.defense == 'elixir' and self.manna < 2:
-            print(f"{self.name} drinks an elixir and is restored to full manna!\n")
-            self.manna = 10
         else:
             print("Invalid defense choice.\n")
 
@@ -64,7 +61,6 @@ class Elemental:
         damage = 1  # Example fixed damage for elemental attacks
         self.foe.manna -= damage
         print(f"The {self.element} elemental causes {damage} damage to {self.foe.name}. \n")
-        
         self.foe.defend()
         if self.foe.manna <= 0:
             print(f"{self.foe.name} has been defeated! \n")
@@ -86,7 +82,7 @@ def start_game():
     
     defense = ''
     while defense not in ['shield', 'armor', 'elixir']:
-        defense = input(f"Choose your defense (shield/armor/elixir): ").strip().lower()
+        defense = input(f"Choose your defense (shield/armor): ").strip().lower()
     
     banisher = Banisher(player_name, weapon, defense, foe=None)
     elemental = Elemental(random_element, foe=banisher)
