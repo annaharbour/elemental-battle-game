@@ -1,34 +1,49 @@
 import random
 
 class Banisher:
-    def __init__(self, name, weapon, elixirs, manna, foe):
+    def __init__(self, name, weapon, defense, foe, elixirs=3, manna=10):
         self.name = name
         self.weapon = weapon
+        self.defense = defense
         self.elixirs = elixirs
-        self.manna = 10 if manna is None else manna
+        self.manna = manna
         self.foe = foe
 
     def attack(self):
-        attack_choice = input(f"{self.name}, choose your attack (sword/elixir): ").strip().lower()
+        attack_choice = input(f"{self.name}, choose your attack ({self.weapon}/elixir): ").strip().lower()
 
-        if attack_choice == 'sword':
-            print(f"{self.name} slashes the {self.foe.element} elemental with their sword!")
-            self.foe.manna -= 1
+        if attack_choice == self.weapon:
+            damage = 2  # Example fixed damage for weapon attack
+            if self.weapon == 'sword':
+                print(f"{self.name} slashes the {self.foe.element} elemental with their sword!")
+            else:
+                print(f"{self.name} shoots an arrow at the {self.foe.element} elemental!")
+            self.foe.manna -= damage
         elif attack_choice == 'elixir' and self.elixirs > 0:
-            print(f"{self.name} throws an elixir at the {self.foe.element} elemental!/n -1 Damage")
-            self.foe.manna = 0
+            print(f"{self.name} throws an elixir at the {self.foe.element} elemental! -1 Damage")
+            self.foe.manna = 0  # Elixir defeats the foe
             self.elixirs -= 1
         else:
             print("Invalid choice or no elixirs left.")
+            return False
         
         if self.foe.manna <= 0:
             print(f"The {self.foe.element} elemental has been defeated!")
             return True
         return False
 
-    def defense(self):
-        defense_choice = input(f"{self.name}, choose your defense (shield/armor/)")
-        if defense_choice = ''
+    def defend(self):
+        if self.defense == 'armor':
+            print(f"{self.name} defends with armor, reducing damage!")
+            self.manna += 1
+        elif self.defense == 'shield':
+            print(f"{self.name} defends with a shield, blocking the attack!")
+            self.manna += 1
+        elif self.defense == 'elixir':
+            print(f"{self.name} drinks an elixir and is restored to full manna!")
+            self.manna = 10
+        else:
+            print("Invalid defense choice.")
 
     def __repr__(self):
         return (f"Banisher(name={self.name}, weapon={self.weapon}, elixirs={self.elixirs}, "
@@ -36,27 +51,21 @@ class Banisher:
 
 
 class Elemental:
-    def __init__(self, element, manna, foe):
+    def __init__(self, element, foe, manna=10):
         self.element = element
-        # Fixing the condition to check if manna is None
-        self.manna = 10 if manna is None else manna
+        self.manna = manna
         self.foe = foe
 
     def attack(self):
-        attacks = ['fire', 'water', 'earth']
+        attacks = ['fire', 'water', 'earth', 'air']
         chosen_attack = random.choice(attacks)
         print(f"The {self.element} elemental attacks with {chosen_attack}!")
+
+        damage = 1  # Example fixed damage for elemental attacks
+        self.foe.manna -= damage
+        print(f"The {self.element} elemental causes {damage} damage to {self.foe.name}.")
         
-        if chosen_attack == 'fire':
-            print(f"The fire elemental burns {self.foe.name}.")
-            self.foe.manna -= 1
-        elif chosen_attack == 'water':
-            print(f"The water elemental drenches {self.foe.name}.")
-            self.foe.manna -= 1
-        elif chosen_attack == 'earth':
-            print(f"The earth elemental shakes the ground beneath {self.foe.name}.")
-            self.foe.manna -= 2
-        
+        self.foe.defend()
         if self.foe.manna <= 0:
             print(f"{self.foe.name} has been defeated!")
             return True
@@ -68,20 +77,30 @@ class Elemental:
 
 # Game setup
 def start_game():
-    # Create the player (Banisher) and the foe (Elemental)
     player_name = input("Enter your name, brave Banisher: ")
-    banisher = Banisher(player_name, 'sword', elixirs=3, manna=10, foe=None)
-    elemental = Elemental('fire', 10, foe=banisher)
+    random_element = random.choice(["earth", "fire", "air", "water"])
+    
+    weapon = ''
+    while weapon not in ['sword', 'longbow']:
+        weapon = input("Choose your weapon, brave Banisher (sword/longbow): ").strip().lower()
+    
+    defense = ''
+    while defense not in ['shield', 'armor', 'elixir']:
+        defense = input(f"Choose your defense (shield/armor/elixir): ").strip().lower()
+    
+    banisher = Banisher(player_name, weapon, defense, foe=None)
+    elemental = Elemental(random_element, foe=banisher)
     banisher.foe = elemental
     
-    print(f"\nWelcome, {banisher.name}! You are up against a {elemental.element} elemental.")
-    print(f"Banisher state: {banisher}")
-    print(f"Elemental state: {elemental}")
+    print(f"\nWelcome, {banisher.name}! You are up against a {elemental.element.title()} elemental.")
     
     while True:
         if banisher.attack():
             break
         if elemental.attack():
             break
+        
+        # Print current states after each round
+        print(f"\nCurrent state:\n{banisher}\n{elemental}")
 
 start_game()
